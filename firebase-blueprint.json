@@ -1,0 +1,64 @@
+{
+  "entities": {
+    "Company": {
+      "title": "Company",
+      "description": "A company or fiscal entity belonging to a user.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "taxRegime": { "type": "string", "enum": ["MICRO_1", "MICRO_3", "PROFIT_16"] },
+        "vatPayer": { "type": "boolean" },
+        "ownerId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "taxRegime", "ownerId"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "A financial transaction representing income or expense.",
+      "type": "object",
+      "properties": {
+        "amount": { "type": "number" },
+        "type": { "type": "string", "enum": ["INCOMING", "OUTGOING"] },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "documentId": { "type": "string" },
+        "companyId": { "type": "string" },
+        "userId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["amount", "type", "date", "userId", "companyId"]
+    },
+    "Document": {
+      "title": "Document",
+      "description": "A financial document (invoice, receipt) uploaded by the user.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["PDF", "DOCX", "XLSX"] },
+        "contentMarkup": { "type": "string" },
+        "extractedData": { "type": "object" },
+        "status": { "type": "string", "enum": ["PENDING", "PROCESSED", "ERROR"] },
+        "companyId": { "type": "string" },
+        "userId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "userId", "companyId", "status"]
+    }
+  },
+  "firestore": {
+    "/companies/{companyId}": {
+      "schema": "Company",
+      "description": "Collection of fiscal entities."
+    },
+    "/transactions/{transactionId}": {
+      "schema": "Transaction",
+      "description": "Collection of financial transactions."
+    },
+    "/documents/{documentId}": {
+      "schema": "Document",
+      "description": "Collection of processed documents."
+    }
+  }
+}
