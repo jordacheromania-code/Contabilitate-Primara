@@ -14,12 +14,71 @@ import { useEffect } from 'react';
 const MainApp = () => {
   const { user, loading } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [accessCode, setAccessCode] = useState('');
+  const [isAuthorized, setIsAuthorized] = useState(() => {
+    return localStorage.getItem('is_team_member_authorized') === 'true';
+  });
+
+  const handleAccess = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (accessCode === 'alexcod01') {
+      setIsAuthorized(true);
+      localStorage.setItem('is_team_member_authorized', 'true');
+    } else {
+      alert('Cod de acces incorect.');
+    }
+  };
 
   useEffect(() => {
     const handleNavigate = (e: any) => setActiveTab(e.detail);
     window.addEventListener('navigate', handleNavigate);
     return () => window.removeEventListener('navigate', handleNavigate);
   }, []);
+
+  if (!isAuthorized) {
+    return (
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center p-6 selection:bg-indigo-500 selection:text-white font-sans">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-md w-full space-y-12"
+        >
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 bg-indigo-600 rounded-2xl mx-auto flex items-center justify-center shadow-2xl shadow-indigo-600/30">
+              <ShieldCheck className="text-white" size={32} />
+            </div>
+            <div className="space-y-1">
+              <h2 className="text-3xl font-black text-white tracking-tighter uppercase">Acces Securizat</h2>
+              <p className="text-slate-400 text-sm font-medium">Platformă rezervată exclusiv echipei SmartFiscal.</p>
+            </div>
+          </div>
+
+          <form onSubmit={handleAccess} className="space-y-4">
+            <div className="space-y-2">
+              <input 
+                type="password"
+                placeholder="COD ACCES"
+                value={accessCode}
+                onChange={(e) => setAccessCode(e.target.value)}
+                className="w-full bg-slate-900 border-2 border-slate-800 rounded-xl px-5 py-4 text-white font-black placeholder:text-slate-700 focus:border-indigo-500 focus:outline-none transition-all text-center tracking-[0.5em] text-lg uppercase"
+                autoFocus
+              />
+            </div>
+            <button 
+              type="submit"
+              className="w-full bg-white text-black py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-indigo-500 hover:text-white transition-all active:scale-[0.98]"
+            >
+              Validează Accesul
+            </button>
+          </form>
+
+          <p className="text-center text-[10px] font-black text-slate-800 uppercase tracking-widest border-t border-slate-900 pt-8 mt-12">
+            Autentificare Echipă . v1.0
+          </p>
+        </motion.div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
